@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 relative to the `1.18.2-*` line of releases.
 
+## [1.18.2-1.3.1] — 2026-06-22
+
+Pre-deployment hardening pass on top of 1.3.0.
+
+### Fixed
+- **Config backwards-compatibility (critical).** v1.3.0 moved the existing `asyncLocatorThreads`
+  and `removeMerchantInvalidMapOffer` keys into a new `[General]` TOML section. This silently
+  reset any customised values on first boot of a server upgrading from 1.1.0. Restored the
+  original flat layout — only new keys (the per-feature toggles) live under `[Features]`.
+  Existing `asynclocator-server.toml` files written by 1.1.0 now upgrade cleanly with zero
+  loss of customisation.
+- **NPE on failed villager-trade locate (critical).** `MerchantLogic.updateMapAsync`
+  (`HolderSet` overload) called `pair.getFirst()` without null-checking `pair`. With the
+  hardened executor's exception isolation now returning `null` on search failure (instead of
+  leaking a future), this would NPE inside the callback and leak the placeholder. Added
+  explicit null guard so failed trade locates correctly invalidate the offer.
+- `SetNameFunctionMixin` now null-guards the incoming `Component name` parameter (defensive —
+  vanilla never passes null, but a mis-behaving loot mod could).
+
+### Changed
+- **`SlotMixin` allows creative-mode bypass.** Admins / OPs in creative mode can now manually
+  remove a stuck pending map (e.g. after a misbehaving structure tag leaves a placeholder
+  orphaned). Survival players still see the original block-pickup protection.
+- `tryReplaceMapInPlayerSlots` and `broadcastMapInPlayerSlots` now also check the
+  `AbstractContainerMenu.getCarried()` cursor stack — handles the edge case where a player
+  is mid-drag with the placeholder on their mouse cursor when the locate task completes.
+
 ## [1.18.2-1.3.0] — 2026-06-22
 
 ### Added
