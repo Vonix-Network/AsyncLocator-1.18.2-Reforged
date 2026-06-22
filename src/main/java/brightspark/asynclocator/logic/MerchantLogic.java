@@ -32,6 +32,7 @@ public class MerchantLogic {
 
 	public static void invalidateMap(AbstractVillager merchant, ItemStack mapStack) {
 		mapStack.setHoverName(new TranslatableComponent("asynclocator.map.none"));
+		mapStack.removeTagKey(CommonLogic.PENDING_TAG_KEY);
 		merchant.getOffers()
 			.stream()
 			.filter(offer -> offer.getResult() == mapStack)
