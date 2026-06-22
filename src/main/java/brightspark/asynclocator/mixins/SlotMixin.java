@@ -34,6 +34,10 @@ public abstract class SlotMixin {
 		cancellable = true
 	)
 	public void asynclocator$preventPickupOfPendingMap(Player player, CallbackInfoReturnable<Boolean> cir) {
+		// Allow creative-mode players to bypass the lock so admins can manually clear a stuck
+		// placeholder map (e.g. after a misbehaving structure tag).
+		if (player.isCreative()) return;
+
 		if (AsyncLocatorConfig.EXPLORATION_MAP_ENABLED.get() && CommonLogic.isEmptyPendingMap(getItem())) {
 			AsyncLocatorMod.logDebug("Blocked pickup of pending async-locator map by {}", player.getName().getString());
 			cir.setReturnValue(false);

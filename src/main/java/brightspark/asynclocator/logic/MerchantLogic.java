@@ -147,7 +147,7 @@ public class MerchantLogic {
 					mapStack,
 					displayName,
 					destinationType,
-					pair.getFirst()
+					pair == null ? null : pair.getFirst()
 				))
 		);
 	}

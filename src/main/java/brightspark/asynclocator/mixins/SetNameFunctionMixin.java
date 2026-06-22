@@ -40,7 +40,9 @@ public class SetNameFunctionMixin {
 		)
 	)
 	public ItemStack asynclocator$deferNameOnPendingMap(ItemStack stack, Component name) {
-		if (AsyncLocatorConfig.EXPLORATION_MAP_ENABLED.get() && CommonLogic.isEmptyPendingMap(stack)) {
+		if (name != null
+			&& AsyncLocatorConfig.EXPLORATION_MAP_ENABLED.get()
+			&& CommonLogic.isEmptyPendingMap(stack)) {
 			AsyncLocatorMod.logDebug("Deferred SetName on pending async-locator map: {}", name.getString());
 			CommonLogic.stashDeferredName(stack, name);
 			return stack;

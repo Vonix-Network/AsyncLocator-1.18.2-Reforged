@@ -89,6 +89,7 @@ public class ExplorationMapFunctionLogic {
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			AbstractContainerMenu menu = player.containerMenu;
 			if (menu != null) {
+				// Open container slots (chest, hopper, dispenser, etc.)
 				for (int i = 0; i < menu.slots.size(); i++) {
 					Slot slot = menu.getSlot(i);
 					if (slot.getItem() == mapStack) {
@@ -100,6 +101,15 @@ public class ExplorationMapFunctionLogic {
 						);
 						return true;
 					}
+				}
+				// Carried stack (player is mid-drag with the placeholder on the cursor)
+				if (menu.getCarried() == mapStack) {
+					menu.setCarried(replacement);
+					menu.broadcastChanges();
+					AsyncLocatorMod.logInfo(
+						"Replaced async-locator map on {}'s cursor", player.getName().getString()
+					);
+					return true;
 				}
 			}
 			Inventory inv = player.getInventory();
@@ -143,6 +153,13 @@ public class ExplorationMapFunctionLogic {
 						);
 						return true;
 					}
+				}
+				if (menu.getCarried() == mapStack) {
+					menu.broadcastChanges();
+					AsyncLocatorMod.logInfo(
+						"Broadcast updated async-locator map on {}'s cursor", player.getName().getString()
+					);
+					return true;
 				}
 			}
 			Inventory inv = player.getInventory();
